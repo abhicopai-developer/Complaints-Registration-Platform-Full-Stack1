@@ -17,7 +17,7 @@ router.post("/send-otp", async (req, res) => {
   try {
     // Check if user exists
     const existingUser = await db.select().from(users).where(eq(users.email, email)).limit(1);
-    
+
     if (existingUser.length > 0 && existingUser[0].is_verified) {
       return res.status(400).json({ error: "Email already registered." });
     }
@@ -34,9 +34,10 @@ router.post("/send-otp", async (req, res) => {
     res.json({ message: "OTP sent to your email." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to send OTP." });
+    res.status(500).json({ error: "Failed to send OTP.", details: error.message, stack: error.stack });
   }
 });
+
 
 // POST /api/auth/register
 router.post("/register", async (req, res) => {
@@ -55,11 +56,11 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ error: "Invalid or expired OTP." });
     }
 
-    await db.update(users).set({ 
-      password, 
-      is_verified: true, 
-      otp: null, 
-      otp_expiry: null 
+    await db.update(users).set({
+      password,
+      is_verified: true,
+      otp: null,
+      otp_expiry: null
     }).where(eq(users.email, email));
 
     res.json({ message: "Registration successful. You can now login." });
@@ -93,7 +94,7 @@ router.post("/login", async (req, res) => {
       sameSite: "lax",
     });
 
-    res.json({ name: userData.name, email: userData.email, role: userData.role });
+    res.json({ name: userData.name, email: userData.email, role: userData.role, token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Login failed." });

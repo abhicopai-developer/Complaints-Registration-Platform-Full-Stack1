@@ -32,8 +32,16 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function checkSession() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        showSection("login");
+        return;
+    }
     try {
-        const res = await fetch(`${API_BASE}/auth/me`, { credentials: "include" });
+        const res = await fetch(`${API_BASE}/auth/me`, { 
+            headers: { "Authorization": `Bearer ${token}` },
+            credentials: "include" 
+        });
         if (res.ok) {
             currentUser = await res.json();
             showDashboard();
@@ -181,6 +189,7 @@ async function login() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
 
+        localStorage.setItem("token", data.token);
         currentUser = data;
         showToast(`Welcome, ${data.name}!`);
         showDashboard();
@@ -190,7 +199,13 @@ async function login() {
 }
 
 async function logout() {
-    await fetch(`${API_BASE}/auth/logout`, { method: "POST", credentials: "include" });
+    const token = localStorage.getItem("token");
+    await fetch(`${API_BASE}/auth/logout`, { 
+        method: "POST", 
+        headers: { "Authorization": `Bearer ${token}` },
+        credentials: "include" 
+    });
+    localStorage.removeItem("token");
     currentUser = null;
     showSection("login");
 }
@@ -212,9 +227,13 @@ async function getAIQuestion() {
 
     try {
         document.getElementById("get-ai-question-btn").innerText = "Analyzing...";
+        const token = localStorage.getItem("token");
         const res = await fetch(`${API_BASE}/ai/question`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
             body: JSON.stringify({ complaint_text: text }),
             credentials: "include"
         });
@@ -240,9 +259,13 @@ async function submitComplaint() {
     if (!answer) return error.innerText = "Please answer the AI question.";
 
     try {
+        const token = localStorage.getItem("token");
         const res = await fetch(`${API_BASE}/complaints`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
             body: JSON.stringify({
                 complaint_text: currentComplaint.text,
                 ai_question: currentComplaint.ai_question,
@@ -268,7 +291,11 @@ async function loadMyComplaints() {
     list.innerHTML = "<p>Loading...</p>";
 
     try {
-        const res = await fetch(`${API_BASE}/complaints/my`, { credentials: "include" });
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${API_BASE}/complaints/my`, { 
+            headers: { "Authorization": `Bearer ${token}` },
+            credentials: "include" 
+        });
         const data = await res.json();
 
         list.innerHTML = data.map(c => `
@@ -300,7 +327,11 @@ async function loadAdminComplaints() {
     list.innerHTML = "<p>Loading dashboard...</p>";
 
     try {
-        const res = await fetch(`${API_BASE}/admin/complaints`, { credentials: "include" });
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${API_BASE}/admin/complaints`, { 
+            headers: { "Authorization": `Bearer ${token}` },
+            credentials: "include" 
+        });
         const data = await res.json();
 
         list.innerHTML = data.map(c => `
