@@ -1,4 +1,4 @@
-const BACKEND_BASE_URL = "http://localhost:3000";
+const BACKEND_BASE_URL = "https://complaints-registration-platform-full-tdqx.onrender.com";
 const API_BASE = `${BACKEND_BASE_URL}/api`;
 
 // State
@@ -38,9 +38,9 @@ async function checkSession() {
         return;
     }
     try {
-        const res = await fetch(`${API_BASE}/auth/me`, { 
+        const res = await fetch(`${API_BASE}/auth/me`, {
             headers: { "Authorization": `Bearer ${token}` },
-            credentials: "include" 
+            credentials: "include"
         });
         if (res.ok) {
             currentUser = await res.json();
@@ -200,10 +200,10 @@ async function login() {
 
 async function logout() {
     const token = localStorage.getItem("token");
-    await fetch(`${API_BASE}/auth/logout`, { 
-        method: "POST", 
+    await fetch(`${API_BASE}/auth/logout`, {
+        method: "POST",
         headers: { "Authorization": `Bearer ${token}` },
-        credentials: "include" 
+        credentials: "include"
     });
     localStorage.removeItem("token");
     currentUser = null;
@@ -230,7 +230,7 @@ async function getAIQuestion() {
         const token = localStorage.getItem("token");
         const res = await fetch(`${API_BASE}/ai/question`, {
             method: "POST",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
@@ -262,7 +262,7 @@ async function submitComplaint() {
         const token = localStorage.getItem("token");
         const res = await fetch(`${API_BASE}/complaints`, {
             method: "POST",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
@@ -292,9 +292,9 @@ async function loadMyComplaints() {
 
     try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`${API_BASE}/complaints/my`, { 
+        const res = await fetch(`${API_BASE}/complaints/my`, {
             headers: { "Authorization": `Bearer ${token}` },
-            credentials: "include" 
+            credentials: "include"
         });
         const data = await res.json();
 
@@ -328,9 +328,9 @@ async function loadAdminComplaints() {
 
     try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`${API_BASE}/admin/complaints`, { 
+        const res = await fetch(`${API_BASE}/admin/complaints`, {
             headers: { "Authorization": `Bearer ${token}` },
-            credentials: "include" 
+            credentials: "include"
         });
         const data = await res.json();
 
