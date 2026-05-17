@@ -39,8 +39,7 @@ async function checkSession() {
     }
     try {
         const res = await fetch(`${API_BASE}/auth/me`, {
-            headers: { "Authorization": `Bearer ${token}` },
-            credentials: "include"
+            headers: { "Authorization": `Bearer ${token}` }
         });
         if (res.ok) {
             currentUser = await res.json();
@@ -183,8 +182,7 @@ async function login() {
         const res = await fetch(`${API_BASE}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-            credentials: "include"
+            body: JSON.stringify({ email, password })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
@@ -202,8 +200,7 @@ async function logout() {
     const token = localStorage.getItem("token");
     await fetch(`${API_BASE}/auth/logout`, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
-        credentials: "include"
+        headers: { "Authorization": `Bearer ${token}` }
     });
     localStorage.removeItem("token");
     currentUser = null;
@@ -234,8 +231,7 @@ async function getAIQuestion() {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ complaint_text: text }),
-            credentials: "include"
+            body: JSON.stringify({ complaint_text: text })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
@@ -270,8 +266,7 @@ async function submitComplaint() {
                 complaint_text: currentComplaint.text,
                 ai_question: currentComplaint.ai_question,
                 user_answer: answer
-            }),
-            credentials: "include"
+            })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
@@ -293,8 +288,7 @@ async function loadMyComplaints() {
     try {
         const token = localStorage.getItem("token");
         const res = await fetch(`${API_BASE}/complaints/my`, {
-            headers: { "Authorization": `Bearer ${token}` },
-            credentials: "include"
+            headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await res.json();
 
@@ -329,8 +323,7 @@ async function loadAdminComplaints() {
     try {
         const token = localStorage.getItem("token");
         const res = await fetch(`${API_BASE}/admin/complaints`, {
-            headers: { "Authorization": `Bearer ${token}` },
-            credentials: "include"
+            headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await res.json();
 
